@@ -37,6 +37,14 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 
 	/** @var  ilObjVideo */
 	public $object;
+	/**
+	 * @var ilObjUser
+	 */
+	protected $user;
+	/**
+	 * @var ilAccess
+	 */
+	protected $access;
 
 	/**
 	 * Initialisation
@@ -48,27 +56,26 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->tabs = $DIC->tabs();
 		$this->tpl = $DIC->ui()->mainTemplate();
 		$this->pl = new ilVideoPlugin();
+		$this->user = $DIC->user();
+		$this->access = $DIC->access();
 	}
 
 	public function executeCommand() {
-		global $DIC;
-		$tpl = $DIC->ui()->mainTemplate();
-
-				$next_class = $this->ctrl->getNextClass($this);
+		$next_class = $this->ctrl->getNextClass($this);
 		switch ($next_class) {
 			case 'ilexportgui':
 				// only if plugin supports it?
-				$tpl->setTitle($this->object->getTitle());
-				$tpl->setTitleIcon(ilObject::_getIcon($this->object->getId()));
+				$this->tpl->setTitle($this->object->getTitle());
+				$this->tpl->setTitleIcon(ilObject::_getIcon($this->object->getId()));
 				$this->setLocator();
-				$tpl->getStandardTemplate();
+				$this->tpl->getStandardTemplate();
 				$this->setTabs();
 				include_once './Services/Export/classes/class.ilExportGUI.php';
 				$this->tabs->activateTab("export");
 				$exp = new ilExportGUI($this);
 				$exp->addFormat('xml');
 				$this->ctrl->forwardCommand($exp);
-				$tpl->show();
+				$this->tpl->show();
 				return;
 				break;
 		}
@@ -137,23 +144,19 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	function setTabs()
 	{
-		global $DIC;
-		$ilCtrl = $DIC->ctrl();
-		$ilAccess = $DIC->access();
-
 		// tab for the "show content" command
-		if ($ilAccess->checkAccess("read", "", $this->object->getRefId()))
+		if ($this->access->checkAccess("read", "", $this->object->getRefId()))
 		{
-			$this->tabs->addTab("content", $this->txt("content"), $ilCtrl->getLinkTarget($this, "showContent"));
+			$this->tabs->addTab("content", $this->txt("content"), $this->ctrl->getLinkTarget($this, "showContent"));
 		}
 
 		// standard info screen tab
 		$this->addInfoTab();
 
 		// a "properties" tab
-		if ($ilAccess->checkAccess("write", "", $this->object->getRefId()))
+		if ($this->access->checkAccess("write", "", $this->object->getRefId()))
 		{
-			$this->tabs->addTab("properties", $this->txt("properties"), $ilCtrl->getLinkTarget($this, "editProperties"));
+			$this->tabs->addTab("properties", $this->txt("properties"), $this->ctrl->getLinkTarget($this, "editProperties"));
 		}
 
 		// standard permission tab
@@ -353,9 +356,8 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	}
 
 	private function setStatusAndRedirect($status) {
-		global $DIC;
 		$_SESSION[self::LP_SESSION_ID] = $status;
-		ilLPStatusWrapper::_updateStatus($this->object->getId(), $DIC->user()->getId());
+		ilLPStatusWrapper::_updateStatus($this->object->getId(), $this->user->getId());
 		$this->ctrl->redirect($this, $this->getStandardCmd());
 	}
 
