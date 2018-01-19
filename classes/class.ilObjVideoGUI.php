@@ -38,10 +38,6 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	/** @var  ilObjVideo */
 	public $object;
 	/**
-	 * @var ilObjUser
-	 */
-	protected $user;
-	/**
 	 * @var ilAccess
 	 */
 	protected $access;
@@ -56,7 +52,6 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->tabs = $DIC->tabs();
 		$this->tpl = $DIC->ui()->mainTemplate();
 		$this->pl = new ilVideoPlugin();
-		$this->user = $DIC->user();
 		$this->access = $DIC->access();
 	}
 
