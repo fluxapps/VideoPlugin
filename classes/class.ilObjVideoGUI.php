@@ -43,15 +43,16 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	protected function afterConstructor()
 	{
-		global $ilCtrl, $ilTabs, $tpl;
-		$this->ctrl = $ilCtrl;
-		$this->tabs = $ilTabs;
-		$this->tpl = $tpl;
+		global $DIC;
+		$this->ctrl = $DIC->ctrl();
+		$this->tabs = $DIC->tabs();
+		$this->tpl = $DIC->ui()->mainTemplate();
 		$this->pl = new ilVideoPlugin();
 	}
 
 	public function executeCommand() {
-		global $tpl;
+		global $DIC;
+		$tpl = $DIC->ui()->mainTemplate();
 
 				$next_class = $this->ctrl->getNextClass($this);
 		switch ($next_class) {
@@ -136,7 +137,9 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	function setTabs()
 	{
-		global $ilCtrl, $ilAccess;
+		global $DIC;
+		$ilCtrl = $DIC->ctrl();
+		$ilAccess = $DIC->access();
 
 		// tab for the "show content" command
 		if ($ilAccess->checkAccess("read", "", $this->object->getRefId()))
@@ -350,9 +353,9 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	}
 
 	private function setStatusAndRedirect($status) {
-		global $ilUser;
+		global $DIC;
 		$_SESSION[self::LP_SESSION_ID] = $status;
-		ilLPStatusWrapper::_updateStatus($this->object->getId(), $ilUser->getId());
+		ilLPStatusWrapper::_updateStatus($this->object->getId(), $DIC->user()->getId());
 		$this->ctrl->redirect($this, $this->getStandardCmd());
 	}
 

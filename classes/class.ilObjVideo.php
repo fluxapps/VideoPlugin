@@ -32,7 +32,8 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doCreate()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
 		$ilDB->manipulate("INSERT INTO rep_robj_xvvv_data ".
 			"(id, is_online) VALUES (".
@@ -72,7 +73,8 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doRead()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
 		$set = $ilDB->query("SELECT * FROM rep_robj_xvvv_data ".
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
@@ -88,7 +90,8 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doUpdate()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
 		$ilDB->manipulate($up = "UPDATE rep_robj_xvvv_data SET ".
 			" is_online = ".$ilDB->quote($this->isOnline(), "integer")."".
@@ -101,7 +104,8 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doDelete()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
 		$ilDB->manipulate("DELETE FROM rep_robj_xvvv_data WHERE ".
 			" id = ".$ilDB->quote($this->getId(), "integer")
@@ -113,8 +117,6 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doClone($a_target_id,$a_copy_id,$new_obj)
 	{
-		global $ilDB;
-
 		$new_obj->setOnline($this->isOnline());
 		$new_obj->setOptionOne($this->getOptionOne());
 		$new_obj->setOptionTwo($this->getOptionTwo());
