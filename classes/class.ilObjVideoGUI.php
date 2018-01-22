@@ -19,6 +19,18 @@ require_once("./Services/Form/classes/class.ilCheckboxInputGUI.php");
  */
 class ilObjVideoGUI extends ilObjectPluginGUI
 {
+	const CMD_EDIT_PROPERTIES = 'editProperties';
+	const CMD_SAVE_PROPERTIES = 'saveProperties';
+	const CMD_SET_STATUS_TO_COMPLETED = 'setStatusToCompleted';
+	const CMD_SET_STATUS_TO_FAILED = 'setStatusToFailed';
+	const CMD_SET_STATUS_TO_IN_PROGRESS = 'setStatusToInProgress';
+	const CMD_SET_STATUS_TO_NOT_ATTEMPTED = 'setStatusToNotAttempted';
+	const CMD_SHOW_CONTENT = 'showContent';
+	const CMD_SHOW_EXPORT = 'showExport';
+	const CMD_UPDATE_PROPERTIES = 'updateProperties';
+	const TAB_CONTENT = 'content';
+	const TAB_EXPORT = 'export';
+	const TAB_PROPERTIES = 'properties';
 	const LP_SESSION_ID = 'xtst_lp_session_state';
 	const A_WIDTH = 178;
 	const A_HEIGHT = 100;
@@ -66,7 +78,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 				$this->tpl->getStandardTemplate();
 				$this->setTabs();
 				include_once './Services/Export/classes/class.ilExportGUI.php';
-				$this->tabs->activateTab("export");
+				$this->tabs->activateTab(self::TAB_EXPORT);
 				$exp = new ilExportGUI($this);
 				$exp->addFormat('xml');
 				$this->ctrl->forwardCommand($exp);
@@ -95,19 +107,19 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	{
 		switch ($cmd)
 		{
-			case "editProperties":   // list all commands that need write permission here
-			case "updateProperties":
-			case "saveProperties":
-			case "showExport":
+			case self::CMD_EDIT_PROPERTIES:   // list all commands that need write permission here
+			case self::CMD_UPDATE_PROPERTIES:
+			case self::CMD_SAVE_PROPERTIES:
+			case self::CMD_SHOW_EXPORT:
 				$this->checkPermission("write");
 				$this->$cmd();
 				break;
 
-			case "showContent":   // list all commands that need read permission here
-			case "setStatusToCompleted":
-			case "setStatusToFailed":
-			case "setStatusToInProgress":
-			case "setStatusToNotAttempted":
+			case self::CMD_SHOW_CONTENT:   // list all commands that need read permission here
+			case self::CMD_SET_STATUS_TO_COMPLETED:
+			case self::CMD_SET_STATUS_TO_FAILED:
+			case self::CMD_SET_STATUS_TO_IN_PROGRESS:
+			case self::CMD_SET_STATUS_TO_NOT_ATTEMPTED:
 				$this->checkPermission("read");
 				$this->$cmd();
 				break;
@@ -119,7 +131,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	function getAfterCreationCmd()
 	{
-		return "editProperties";
+		return self::CMD_EDIT_PROPERTIES;
 	}
 
 	/**
@@ -127,7 +139,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	function getStandardCmd()
 	{
-		return "showContent";
+		return self::CMD_SHOW_CONTENT;
 	}
 
 //
@@ -142,7 +154,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		// tab for the "show content" command
 		if ($this->access->checkAccess("read", "", $this->object->getRefId()))
 		{
-			$this->tabs->addTab("content", $this->txt("content"), $this->ctrl->getLinkTarget($this, "showContent"));
+			$this->tabs->addTab(self::TAB_CONTENT, $this->txt("content"), $this->ctrl->getLinkTarget($this, self::CMD_SHOW_CONTENT));
 		}
 
 		// standard info screen tab
@@ -151,7 +163,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		// a "properties" tab
 		if ($this->access->checkAccess("write", "", $this->object->getRefId()))
 		{
-			$this->tabs->addTab("properties", $this->txt("properties"), $this->ctrl->getLinkTarget($this, "editProperties"));
+			$this->tabs->addTab(self::TAB_PROPERTIES, $this->txt("properties"), $this->ctrl->getLinkTarget($this, self::CMD_EDIT_PROPERTIES));
 		}
 
 		// standard permission tab
@@ -164,7 +176,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	protected function editProperties()
 	{
-		$this->tabs->activateTab("properties");
+		$this->tabs->activateTab(self::TAB_PROPERTIES);
 		$form = $this->initPropertiesForm();
 		$this->addValuesToForm($form);
 		$this->tpl->setContent($form->getHTML());
@@ -188,8 +200,8 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$online = new ilCheckboxInputGUI($this->plugin->txt("online"), "online");
 		$form->addItem($online);
 
-		$form->setFormAction($this->ctrl->getFormAction($this, "saveProperties"));
-		$form->addCommandButton("saveProperties", $this->plugin->txt("update"));
+		$form->setFormAction($this->ctrl->getFormAction($this, self::CMD_SAVE_PROPERTIES));
+		$form->addCommandButton(self::CMD_SAVE_PROPERTIES, $this->plugin->txt("update"));
 
 		$file_input = new ilFileInputGUI($this->pl->txt('video_file'), 'video_file');
 		$file_input->setRequired(true);
@@ -225,6 +237,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 *
 	 */
 	protected function saveProperties() {
+		$this->tabs->activateTab(self::TAB_PROPERTIES);
 		$form = $this->initPropertiesForm();
 		$form->setValuesByPost();
 		if($form->checkInput()) {
@@ -232,7 +245,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 			$this->object->update();
 			$this->saveVideo();
 			ilUtil::sendSuccess($this->plugin->txt("update_successful"), true);
-			$this->ctrl->redirect($this, "editProperties");
+			$this->ctrl->redirect($this, self::CMD_EDIT_PROPERTIES);
 		}
 		$this->tpl->setContent($form->getHTML());
 	}
@@ -281,7 +294,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	}
 
 	protected function showContent() {
-		$this->tabs->activateTab("content");
+		$this->tabs->activateTab(self::TAB_CONTENT);
 
 		if(count($this->object->getSourcesToURL()) && $this->object->conversionFailed()) {
 			// Conversion failed but we have a displayable format.
@@ -339,7 +352,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 
 		switch($next_class) {
 			case 'ilexportgui':
-				$this->tabs->activateTab("export");
+				$this->tabs->activateTab(self::TAB_EXPORT);
 				break;
 		}
 

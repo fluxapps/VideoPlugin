@@ -25,7 +25,7 @@ class ilObjVideoListGUI extends ilObjectPluginListGUI
 	 */
 	function getGuiClass()
 	{
-		return "ilObjVideoGUI";
+		return ilObjVideoGUI::class;
 	}
 
 	/**
@@ -37,11 +37,11 @@ class ilObjVideoListGUI extends ilObjectPluginListGUI
 		(
 			array(
 				"permission" => "read",
-				"cmd" => "showContent",
+				"cmd" => ilObjVideoGUI::CMD_SHOW_CONTENT,
 				"default" => true),
 			array(
 				"permission" => "write",
-				"cmd" => "editProperties",
+				"cmd" => ilObjVideoGUI::CMD_EDIT_PROPERTIES,
 				"txt" => $this->txt("edit"),
 				"default" => false),
 		);
