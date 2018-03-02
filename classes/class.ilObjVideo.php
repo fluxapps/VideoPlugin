@@ -3,6 +3,7 @@
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilObjVideoGUI.php");
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilVideoData.php';
 
 /**
  */
@@ -35,7 +36,7 @@ class ilObjVideo extends ilObjectPlugin
 		global $DIC;
 		$ilDB = $DIC->database();
 
-		$ilDB->manipulate("INSERT INTO rep_robj_xvvv_data ".
+		$ilDB->manipulate("INSERT INTO " . ilVideoData::TABLE_NAME . " ".
 			"(id, is_online) VALUES (".
 			$ilDB->quote($this->getId(), "integer").",".
 			$ilDB->quote(0, "integer") . ")");
@@ -76,7 +77,7 @@ class ilObjVideo extends ilObjectPlugin
 		global $DIC;
 		$ilDB = $DIC->database();
 
-		$set = $ilDB->query("SELECT * FROM rep_robj_xvvv_data ".
+		$set = $ilDB->query("SELECT * FROM " . ilVideoData::TABLE_NAME . " ".
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
 		);
 		while ($rec = $ilDB->fetchAssoc($set))
@@ -93,7 +94,7 @@ class ilObjVideo extends ilObjectPlugin
 		global $DIC;
 		$ilDB = $DIC->database();
 
-		$ilDB->manipulate($up = "UPDATE rep_robj_xvvv_data SET ".
+		$ilDB->manipulate($up = "UPDATE " . ilVideoData::TABLE_NAME . " SET ".
 			" is_online = ".$ilDB->quote($this->isOnline(), "integer")."".
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
 		);
@@ -107,7 +108,7 @@ class ilObjVideo extends ilObjectPlugin
 		global $DIC;
 		$ilDB = $DIC->database();
 
-		$ilDB->manipulate("DELETE FROM rep_robj_xvvv_data WHERE ".
+		$ilDB->manipulate("DELETE FROM " . ilVideoData::TABLE_NAME . " WHERE ".
 			" id = ".$ilDB->quote($this->getId(), "integer")
 		);
 	}

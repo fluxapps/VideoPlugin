@@ -3,6 +3,7 @@
 include_once("./Services/Repository/classes/class.ilObjectPluginAccess.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilObjVideo.php");
 require_once("./Services/AccessControl/interfaces/interface.ilConditionHandling.php");
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilVideoData.php';
 
 /**
  * Please do not create instances of large application classes
@@ -61,7 +62,7 @@ class ilObjVideoAccess extends ilObjectPluginAccess
 		global $DIC;
 		$ilDB = $DIC->database();
 
-		$set = $ilDB->query("SELECT is_online FROM rep_robj_xvvv_data ".
+		$set = $ilDB->query("SELECT is_online FROM " . ilVideoData::TABLE_NAME . " ".
 			" WHERE id = ".$ilDB->quote($a_id, "integer")
 		);
 		$rec  = $ilDB->fetchAssoc($set);

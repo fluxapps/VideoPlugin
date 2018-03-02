@@ -1,5 +1,6 @@
 <#1>
 <?php
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilVideoData.php';
 $fields = array(
 	'id' => array(
 		'type' => 'integer',
@@ -13,8 +14,8 @@ $fields = array(
 	)
 );
 
-if(!$ilDB->tableExists('rep_robj_xvvv_data')) {
-    $ilDB->createTable("rep_robj_xvvv_data", $fields);
-    $ilDB->addPrimaryKey("rep_robj_xvvv_data", array("id"));
+if(!$ilDB->tableExists(ilVideoData::TABLE_NAME)) {
+    $ilDB->createTable(ilVideoData::TABLE_NAME, $fields);
+    $ilDB->addPrimaryKey(ilVideoData::TABLE_NAME, array("id"));
 }
 ?>
