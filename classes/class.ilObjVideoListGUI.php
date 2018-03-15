@@ -10,8 +10,7 @@ require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
  * PLEASE do not create instances of larger classes here. Use the
  * ...Access class to get DB data and keep it small.
  */
-class ilObjVideoListGUI extends ilObjectPluginListGUI
-{
+class ilObjVideoListGUI extends ilObjectPluginListGUI {
 
 	/**
 	 * Init type
@@ -20,32 +19,34 @@ class ilObjVideoListGUI extends ilObjectPluginListGUI
 		$this->setType(ilVideoPlugin::PLUGIN_ID);
 	}
 
+
 	/**
 	 * Get name of gui class handling the commands
 	 */
-	function getGuiClass()
-	{
+	function getGuiClass() {
 		return ilObjVideoGUI::class;
 	}
+
 
 	/**
 	 * Get commands
 	 */
-	function initCommands()
-	{
-		return array
-		(
+	function initCommands() {
+		return array(
 			array(
 				"permission" => "read",
 				"cmd" => ilObjVideoGUI::CMD_SHOW_CONTENT,
-				"default" => true),
+				"default" => true
+			),
 			array(
 				"permission" => "write",
 				"cmd" => ilObjVideoGUI::CMD_EDIT_PROPERTIES,
 				"txt" => $this->txt("edit"),
-				"default" => false),
+				"default" => false
+			),
 		);
 	}
+
 
 	/**
 	 * Get item properties
@@ -55,18 +56,20 @@ class ilObjVideoListGUI extends ilObjectPluginListGUI
 	 *                                "property" (string) => property name
 	 *                                "value" (string) => property value
 	 */
-	function getProperties()
-	{
+	function getProperties() {
 		$props = array();
 
 		$this->plugin->includeClass("class.ilObjVideoAccess.php");
-		if (!ilObjVideoAccess::checkOnline($this->obj_id))
-		{
-			$props[] = array("alert" => true, "property" => $this->txt("status"),
-				"value" => $this->txt("offline"));
+		if (!ilObjVideoAccess::checkOnline($this->obj_id)) {
+			$props[] = array(
+				"alert" => true,
+				"property" => $this->txt("status"),
+				"value" => $this->txt("offline")
+			);
 		}
 
 		return $props;
 	}
 }
+
 ?>
