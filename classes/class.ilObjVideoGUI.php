@@ -97,7 +97,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	final function getType()
 	{
-		return ilVideoPlugin::ID;
+		return ilVideoPlugin::PLUGIN_ID;
 	}
 
 	/**

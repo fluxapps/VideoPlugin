@@ -25,7 +25,7 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	final function initType()
 	{
-		$this->setType(ilVideoPlugin::ID);
+		$this->setType(ilVideoPlugin::PLUGIN_ID);
 	}
 
 	/**

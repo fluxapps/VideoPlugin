@@ -17,7 +17,7 @@ class ilObjVideoListGUI extends ilObjectPluginListGUI
 	 * Init type
 	 */
 	function initType() {
-		$this->setType(ilVideoPlugin::ID);
+		$this->setType(ilVideoPlugin::PLUGIN_ID);
 	}
 
 	/**
