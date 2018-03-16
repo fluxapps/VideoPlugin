@@ -15,10 +15,10 @@ require_once("./Services/Form/classes/class.ilCheckboxInputGUI.php");
 
 /**
  * @ilCtrl_isCalledBy ilObjVideoGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
- * @ilCtrl_Calls ilObjVideoGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI
+ * @ilCtrl_Calls      ilObjVideoGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI, ilExportGUI
  */
-class ilObjVideoGUI extends ilObjectPluginGUI
-{
+class ilObjVideoGUI extends ilObjectPluginGUI {
+
 	const CMD_EDIT_PROPERTIES = 'editProperties';
 	const CMD_SAVE_PROPERTIES = 'saveProperties';
 	const CMD_SET_STATUS_TO_COMPLETED = 'setStatusToCompleted';
@@ -34,19 +34,14 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	const LP_SESSION_ID = 'xtst_lp_session_state';
 	const A_WIDTH = 178;
 	const A_HEIGHT = 100;
-
 	/** @var  ilCtrl */
 	protected $ctrl;
-
 	/** @var  ilTabsGUI */
 	protected $tabs;
-
 	/** @var  ilTemplate */
 	public $tpl;
-
 	/** @var  ilVideoPlugin */
 	public $pl;
-
 	/** @var  ilObjVideo */
 	public $object;
 	/**
@@ -54,18 +49,19 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	 */
 	protected $access;
 
+
 	/**
 	 * Initialisation
 	 */
-	protected function afterConstructor()
-	{
+	protected function afterConstructor() {
 		global $DIC;
 		$this->ctrl = $DIC->ctrl();
 		$this->tabs = $DIC->tabs();
 		$this->tpl = $DIC->ui()->mainTemplate();
-		$this->pl = new ilVideoPlugin();
+		$this->pl = ilVideoPlugin::getInstance();
 		$this->access = $DIC->access();
 	}
+
 
 	public function executeCommand() {
 		$next_class = $this->ctrl->getNextClass($this);
@@ -83,6 +79,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 				$exp->addFormat('xml');
 				$this->ctrl->forwardCommand($exp);
 				$this->tpl->show();
+
 				return;
 				break;
 		}
@@ -92,21 +89,20 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		return $return_value;
 	}
 
+
 	/**
 	 * Get type.
 	 */
-	final function getType()
-	{
+	final function getType() {
 		return ilVideoPlugin::PLUGIN_ID;
 	}
+
 
 	/**
 	 * Handles all commmands of this class, centralizes permission checks
 	 */
-	function performCommand($cmd)
-	{
-		switch ($cmd)
-		{
+	function performCommand($cmd) {
+		switch ($cmd) {
 			case self::CMD_EDIT_PROPERTIES:   // list all commands that need write permission here
 			case self::CMD_UPDATE_PROPERTIES:
 			case self::CMD_SAVE_PROPERTIES:
@@ -126,34 +122,32 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		}
 	}
 
+
 	/**
 	 * After object has been created -> jump to this command
 	 */
-	function getAfterCreationCmd()
-	{
+	function getAfterCreationCmd() {
 		return self::CMD_EDIT_PROPERTIES;
 	}
+
 
 	/**
 	 * Get standard command
 	 */
-	function getStandardCmd()
-	{
+	function getStandardCmd() {
 		return self::CMD_SHOW_CONTENT;
 	}
 
-//
-// DISPLAY TABS
-//
+	//
+	// DISPLAY TABS
+	//
 
 	/**
 	 * Set tabs
 	 */
-	function setTabs()
-	{
+	function setTabs() {
 		// tab for the "show content" command
-		if ($this->access->checkAccess("read", "", $this->object->getRefId()))
-		{
+		if ($this->access->checkAccess("read", "", $this->object->getRefId())) {
 			$this->tabs->addTab(self::TAB_CONTENT, $this->txt("content"), $this->ctrl->getLinkTarget($this, self::CMD_SHOW_CONTENT));
 		}
 
@@ -161,8 +155,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->addInfoTab();
 
 		// a "properties" tab
-		if ($this->access->checkAccess("write", "", $this->object->getRefId()))
-		{
+		if ($this->access->checkAccess("write", "", $this->object->getRefId())) {
 			$this->tabs->addTab(self::TAB_PROPERTIES, $this->txt("properties"), $this->ctrl->getLinkTarget($this, self::CMD_EDIT_PROPERTIES));
 		}
 
@@ -171,16 +164,17 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->activateTab();
 	}
 
+
 	/**
 	 * Edit Properties. This commands uses the form class to display an input form.
 	 */
-	protected function editProperties()
-	{
+	protected function editProperties() {
 		$this->tabs->activateTab(self::TAB_PROPERTIES);
 		$form = $this->initPropertiesForm();
 		$this->addValuesToForm($form);
 		$this->tpl->setContent($form->getHTML());
 	}
+
 
 	/**
 	 * @return ilPropertyFormGUI
@@ -207,7 +201,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$file_input->setRequired(true);
 		$file_input->setSuffixes(array( '3gp', 'flv', 'mp4', 'webm' ));
 
-		if($this->object->hasVideo()) {
+		if ($this->object->hasVideo()) {
 			$cb = new ilCheckboxInputGUI($this->pl->txt("override_file"));
 			$cb->addSubItem($file_input);
 			$form->addItem($cb);
@@ -215,12 +209,13 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 			$form->addItem($file_input);
 		}
 
-//		$num_input = new ilNumberInputGUI($this->pl->txt('form_image_at_sec'), 'image_at_sec');
-//		$num_input->setInfo($this->pl->txt('form_image_at_sec_info'));
-//		$form->addItem($num_input);
+		//		$num_input = new ilNumberInputGUI($this->pl->txt('form_image_at_sec'), 'image_at_sec');
+		//		$num_input->setInfo($this->pl->txt('form_image_at_sec_info'));
+		//		$form->addItem($num_input);
 
 		return $form;
 	}
+
 
 	/**
 	 * @param $form ilPropertyFormGUI
@@ -233,6 +228,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		));
 	}
 
+
 	/**
 	 *
 	 */
@@ -240,7 +236,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->tabs->activateTab(self::TAB_PROPERTIES);
 		$form = $this->initPropertiesForm();
 		$form->setValuesByPost();
-		if($form->checkInput()) {
+		if ($form->checkInput()) {
 			$this->fillObject($this->object, $form);
 			$this->object->update();
 			$this->saveVideo();
@@ -250,15 +246,17 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->tpl->setContent($form->getHTML());
 	}
 
+
 	protected function saveVideo() {
 		$video_file = $_FILES['video_file'];
-		if(!$video_file || !$video_file['name'])
+		if (!$video_file || !$video_file['name']) {
 			return true;
+		}
 
 		$this->deleteAllFiles();
 
 		$suffix = pathinfo($video_file['name'], PATHINFO_EXTENSION);
-		if (! $this->checkSuffix($suffix)) {
+		if (!$this->checkSuffix($suffix)) {
 			$response = new stdClass();
 			$response->error = $this->pl->txt('form_wrong_filetype') . ' (' . $suffix . ')';
 			throw new ilException($this->pl->txt('form_wrong_filetype') . ' (' . $suffix . ')');
@@ -267,24 +265,27 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		move_uploaded_file($video_file['tmp_name'], $this->object->getOriginalPath($suffix));
 
 		$mediaConverter = new mcMedia();
-		$mediaConverter->uploadFile('video', $suffix, $this->object->getVideoPath(), substr($this->object->getVideoPath(), 0, -1), $this->object->getId());
+		$mediaConverter->uploadFile('video', $suffix, $this->object->getVideoPath(), substr($this->object->getVideoPath(), 0, - 1), $this->object->getId());
 	}
 
+
 	protected function deleteAllFiles() {
-		$this->deleteFiles($this->object->getVideoPath()."*");
-		$this->deleteFiles($this->object->getIconPath()."*");
+		$this->deleteFiles($this->object->getVideoPath() . "*");
+		$this->deleteFiles($this->object->getIconPath() . "*");
 	}
+
 
 	protected function deleteFiles($path) {
 		$files = glob($path); // get all file names
-		foreach($files as $file){ // iterate files
-			if(is_file($file))
-				unlink($file); // delete file
+		foreach ($files as $file) { // iterate files
+			if (is_file($file)) {
+				unlink($file);
+			} // delete file
 		}
 	}
 
-	public function extractImage($atSecond = 1)
-	{
+
+	public function extractImage($atSecond = 1) {
 		try {
 			mcFFmpeg::extractImage($this->object->getOriginalPath(), $this->object->getIconPath(), $this->object->getPosterTitle(), $atSecond);
 		} catch (ilFFmpegException $e) {
@@ -293,24 +294,25 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		ilUtil::resizeImage($this->object->getPosterPath(), $this->object->getThumbnailPath(), self::A_WIDTH, self::A_HEIGHT, true);
 	}
 
+
 	protected function showContent() {
 		$this->tabs->activateTab(self::TAB_CONTENT);
 
-		if(count($this->object->getSourcesToURL()) && $this->object->conversionFailed()) {
+		if (count($this->object->getSourcesToURL()) && $this->object->conversionFailed()) {
 			// Conversion failed but we have a displayable format.
 			ilUtil::sendInfo($this->pl->txt("conversion_failed_info"));
-		} elseif(!count($this->object->getSourcesToURL() && $this->object->conversionFailed())) {
+		} elseif (!count($this->object->getSourcesToURL() && $this->object->conversionFailed())) {
 			//converstion failed and we have no displayable format.
 			ilUtil::sendFailure($this->pl->txt("converstion_failed_fail"));
 		}
 
-		if($this->object->isConverting()) {
+		if ($this->object->isConverting()) {
 			ilUtil::sendInfo($this->pl->txt("conversion_in_progress"));
 		}
 
-		if(!count($this->object->getSourcesToURL()))
+		if (!count($this->object->getSourcesToURL())) {
 			$html = $this->pl->txt("no_video_available");
-		else {
+		} else {
 
 			$tpl = $this->pl->getTemplate("tpl.content.html");
 
@@ -326,9 +328,10 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->tpl->setContent($html);
 	}
 
+
 	/**
 	 * @param $object ilObjVideo
-	 * @param $form ilPropertyFormGUI
+	 * @param $form   ilPropertyFormGUI
 	 */
 	private function fillObject($object, $form) {
 		$object->setTitle($form->getInput('title'));
@@ -336,13 +339,14 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$object->setOnline($form->getInput('online'));
 	}
 
+
 	protected function showExport() {
 		require_once("./Services/Export/classes/class.ilExportGUI.php");
 		$export = new ilExportGUI($this);
 		$export->addFormat("xml");
 		$ret = $this->ctrl->forwardCommand($export);
-
 	}
+
 
 	/**
 	 * We need this method if we can't access the tabs otherwise...
@@ -350,7 +354,7 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 	private function activateTab() {
 		$next_class = $this->ctrl->getCmdClass();
 
-		switch($next_class) {
+		switch ($next_class) {
 			case 'ilexportgui':
 				$this->tabs->activateTab(self::TAB_EXPORT);
 				break;
@@ -359,9 +363,11 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		return;
 	}
 
+
 	private function setStatusToCompleted() {
 		$this->setStatusAndRedirect(ilLPStatus::LP_STATUS_COMPLETED_NUM);
 	}
+
 
 	private function setStatusAndRedirect($status) {
 		$_SESSION[self::LP_SESSION_ID] = $status;
@@ -369,17 +375,21 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		$this->ctrl->redirect($this, $this->getStandardCmd());
 	}
 
+
 	protected function setStatusToFailed() {
 		$this->setStatusAndRedirect(ilLPStatus::LP_STATUS_FAILED_NUM);
 	}
+
 
 	protected function setStatusToInProgress() {
 		$this->setStatusAndRedirect(ilLPStatus::LP_STATUS_IN_PROGRESS_NUM);
 	}
 
+
 	protected function setStatusToNotAttempted() {
 		$this->setStatusAndRedirect(ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM);
 	}
+
 
 	function checkSuffix($suffix) {
 		if (in_array($suffix, array( '3pgg', '3gp', 'flv', 'mp4', 'webm' ))) {
@@ -389,4 +399,5 @@ class ilObjVideoGUI extends ilObjectPluginGUI
 		return false;
 	}
 }
+
 ?>
