@@ -3,6 +3,7 @@
 include_once("./Services/Repository/classes/class.ilObjectPluginAccess.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilObjVideo.php");
 require_once("./Services/AccessControl/interfaces/interface.ilConditionHandling.php");
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilVideoData.php';
 
 /**
  * Please do not create instances of large application classes
@@ -31,18 +32,18 @@ class ilObjVideoAccess extends ilObjectPluginAccess
 	 */
 	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = 0)
 	{
-		global $ilUser, $ilAccess;
+		global $DIC;
 
 		if ($a_user_id == 0)
 		{
-			$a_user_id = $ilUser->getId();
+			$a_user_id = $DIC->user()->getId();
 		}
 
 		switch ($a_permission)
 		{
 			case "read":
 				if (!ilObjVideoAccess::checkOnline($a_obj_id) &&
-					!$ilAccess->checkAccessOfUser($a_user_id, "write", "", $a_ref_id))
+					!$DIC->access()->checkAccessOfUser($a_user_id, "write", "", $a_ref_id))
 				{
 					return false;
 				}
@@ -58,9 +59,10 @@ class ilObjVideoAccess extends ilObjectPluginAccess
 	 */
 	static function checkOnline($a_id)
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
-		$set = $ilDB->query("SELECT is_online FROM rep_robj_xvvv_data ".
+		$set = $ilDB->query("SELECT is_online FROM " . ilVideoData::TABLE_NAME . " ".
 			" WHERE id = ".$ilDB->quote($a_id, "integer")
 		);
 		$rec  = $ilDB->fetchAssoc($set);

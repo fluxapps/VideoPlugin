@@ -3,6 +3,7 @@
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 require_once("./Services/Tracking/interfaces/interface.ilLPStatusPlugin.php");
 require_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilObjVideoGUI.php");
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Video/classes/class.ilVideoData.php';
 
 /**
  */
@@ -24,7 +25,7 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	final function initType()
 	{
-		$this->setType(ilVideoPlugin::ID);
+		$this->setType(ilVideoPlugin::PLUGIN_ID);
 	}
 
 	/**
@@ -32,9 +33,10 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doCreate()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
-		$ilDB->manipulate("INSERT INTO rep_robj_xvvv_data ".
+		$ilDB->manipulate("INSERT INTO " . ilVideoData::TABLE_NAME . " ".
 			"(id, is_online) VALUES (".
 			$ilDB->quote($this->getId(), "integer").",".
 			$ilDB->quote(0, "integer") . ")");
@@ -72,9 +74,10 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doRead()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
-		$set = $ilDB->query("SELECT * FROM rep_robj_xvvv_data ".
+		$set = $ilDB->query("SELECT * FROM " . ilVideoData::TABLE_NAME . " ".
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
 		);
 		while ($rec = $ilDB->fetchAssoc($set))
@@ -88,9 +91,10 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doUpdate()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
-		$ilDB->manipulate($up = "UPDATE rep_robj_xvvv_data SET ".
+		$ilDB->manipulate($up = "UPDATE " . ilVideoData::TABLE_NAME . " SET ".
 			" is_online = ".$ilDB->quote($this->isOnline(), "integer")."".
 			" WHERE id = ".$ilDB->quote($this->getId(), "integer")
 		);
@@ -101,9 +105,10 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doDelete()
 	{
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC->database();
 
-		$ilDB->manipulate("DELETE FROM rep_robj_xvvv_data WHERE ".
+		$ilDB->manipulate("DELETE FROM " . ilVideoData::TABLE_NAME . " WHERE ".
 			" id = ".$ilDB->quote($this->getId(), "integer")
 		);
 	}
@@ -113,8 +118,6 @@ class ilObjVideo extends ilObjectPlugin
 	 */
 	function doClone($a_target_id,$a_copy_id,$new_obj)
 	{
-		global $ilDB;
-
 		$new_obj->setOnline($this->isOnline());
 		$new_obj->setOptionOne($this->getOptionOne());
 		$new_obj->setOptionTwo($this->getOptionTwo());
